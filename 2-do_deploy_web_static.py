@@ -27,53 +27,40 @@ def do_deploy(archive_path):
     file = archive_path.split('/')[-1]
     file_name = file.split(".")[0]
 
-    # Get the file name without extension and upload the archive.
-    upload_ops = put(archive_path, "/tmp/{}".format(file))
-    if upload_ops.failed:
-        return False
+    try:
+        # Upload the archive.
+        put(archive_path, "/tmp/{}".format(file))
 
-    # Create the directory for the new version
-    newdir_ops = run(f"mkdir -p /data/web_static/releases/{file_name}")
-    if newdir_ops.failed:
-        return False
+        # Create the directory for the new version
+        run(f"mkdir -p /data/web_static/releases/{file_name}/")
 
-    Uncompress_ops = run(
-        f"tar -xzf /tmp/{file} -C /data//web_static/releases/{file_name}"
-    )
-    if Uncompress_ops.failed:
-        return False
+        run(
+            f"tar -xzf /tmp/{file} -C /data//web_static/releases/{file_name}"
+        )
 
-    # Remove the archive from the server
-    delete_ops = run(f"rm /tmp/{file}")
-    if delete_ops.failed:
-        return False
+        # Remove the archive from the server
+        run(f"rm /tmp/{file}")
 
-    # Move the contents to the correct location
-    move_ops = run(
-        f"mv /data/web_static/releases/{file_name}/web_static/* "
-        f"/data/web_static/releases/{file_name}/"
-    )
-    if move_ops.failed:
-        return False
+        # Move the contents to the correct location
+        run(
+            f"mv /data/web_static/releases/{file_name}/web_static/* "
+            f"/data/web_static/releases/{file_name}/"
+        )
 
-    # Delete the old web_static directory
-    remove_ops = run(
-        f"rm -rf /data/web_static/releases/{file_name}/web_static"
-    )
-    if remove_ops.failed:
-        return False
+        # Delete the old web_static directory
+        run(
+            f"rm -rf /data/web_static/releases/{file_name}/web_static"
+        )
 
-    # Delete the old symbolic link
-    delete_symblink = run(f"rm -rf /data/web_static/current")
-    if delete_symblink.failed:
-        return False
+        # Delete the old symbolic link
+        run(f"rm -rf /data/web_static/current")
 
-    # Create a new symbolic link
-    new_symblink = run(
-        f"ln -s /data/web_static/releases/{file_name}/ "
-        f"/data/web_static/current"
-    )
-    if new_symblink.failed:
-        return False
+        # Create a new symbolic link
+        run(
+            f"ln -s /data/web_static/releases/{file_name}/ "
+            f"/data/web_static/current"
+        )
 
-    return True
+        return True
+    except Exception as e:
+        return False
