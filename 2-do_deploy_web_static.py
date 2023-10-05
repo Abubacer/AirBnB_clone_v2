@@ -3,7 +3,7 @@
 This a Fabric script that deploys a .tgz archive to my web servers.
 """
 
-import os.path
+import os
 from fabric.api import local, run, put, env
 
 
@@ -20,6 +20,7 @@ def do_deploy(archive_path):
     Returns:
         bool: True if all ops have been done correctly, otherwise False.
     """
+    # Check if the archive file exists locally
     if not os.path.exists(archive_path):
         return False
 
@@ -28,17 +29,21 @@ def do_deploy(archive_path):
     file_name = file.split(".")[0]
 
     try:
-        # Upload the archive.
+        # Upload the archive on the tmp directory in server.
         put(archive_path, "/tmp/{}".format(file))
+
+        # Delete the existing directory for the new version, if it exists
+        run(f"rm -rf /data/web_static/releases/{file_name}/")
 
         # Create the directory for the new version
         run(f"mkdir -p /data/web_static/releases/{file_name}/")
 
+        # Uncompress the archive into the new directory
         run(
             f"tar -xzf /tmp/{file} -C /data//web_static/releases/{file_name}"
         )
 
-        # Remove the archive from the server
+        # Remove the uploaded archive from the the tmp directory in server
         run(f"rm /tmp/{file}")
 
         # Move the contents to the correct location
@@ -55,7 +60,7 @@ def do_deploy(archive_path):
         # Delete the old symbolic link
         run(f"rm -rf /data/web_static/current")
 
-        # Create a new symbolic link
+        # Create a new symbolic link to point the new version
         run(
             f"ln -s /data/web_static/releases/{file_name}/ "
             f"/data/web_static/current"
