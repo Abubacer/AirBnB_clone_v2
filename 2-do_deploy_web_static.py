@@ -40,7 +40,7 @@ def do_deploy(archive_path):
 
         # Uncompress the archive into the new directory
         run(
-            f"tar -xzf /tmp/{file} -C /data//web_static/releases/{file_name}"
+            f"tar -xzf /tmp/{file} -C /data//web_static/releases/{file_name}/"
         )
 
         # Remove the uploaded archive from the the tmp directory in server
@@ -67,5 +67,5 @@ def do_deploy(archive_path):
         )
 
         return True
-    except Exception as e:
+    except:
         return False
