@@ -18,11 +18,11 @@ def do_pack():
 
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
-    file = f"versions/web_static_{timestamp}.tgz"
+    file_ = f"versions/web_static_{timestamp}.tgz"
 
-    dest_file = local(f"sudo tar -cvzf {file} web_static")
+    dest_file = local(f"sudo tar -cvzf {file_} web_static")
 
     if dest_file.succeeded:
-        return file
+        return file_
     else:
         return None
