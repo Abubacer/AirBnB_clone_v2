@@ -3,8 +3,8 @@
 This a Fabric script that deploys a .tgz archive to my web servers.
 """
 
-import os
-from fabric.api import local, run, put, env
+from os.path import exists
+from fabric.api import run, put, env
 
 
 env.hosts = ['3.84.161.155', '100.25.23.133']
@@ -20,51 +20,22 @@ def do_deploy(archive_path):
     Returns:
         bool: True if all ops have been done correctly, otherwise False.
     """
-    # Check if the archive file exists locally
-    if not os.path.exists(archive_path):
+    if exists(archive_path) is False:
         return False
 
-    # Get the file name without extension
-    file = archive_path.split('/')[-1]
-    file_name = file.split(".")[0]
+    filename = archive_path.split('/')[-1]
+    no_tgz = '/data/web_static/releases/' + "{}".format(filename.split('.')[0])
+    tmp = "/tmp/" + filename
 
     try:
-        # Upload the archive on the tmp directory in server.
-        put(archive_path, "/tmp/{}".format(file))
-
-        # Delete the existing directory for the new version, if it exists
-        run(f"rm -rf /data/web_static/releases/{file_name}/")
-
-        # Create the directory for the new version
-        run(f"mkdir -p /data/web_static/releases/{file_name}/")
-
-        # Uncompress the archive into the new directory
-        run(
-            f"tar -xzf /tmp/{file} -C /data//web_static/releases/{file_name}/"
-        )
-
-        # Remove the uploaded archive from the the tmp directory in server
-        run(f"rm /tmp/{file}")
-
-        # Move the contents to the correct location
-        run(
-            f"mv /data/web_static/releases/{file_name}/web_static/* "
-            f"/data/web_static/releases/{file_name}/"
-        )
-
-        # Delete the old web_static directory
-        run(
-            f"rm -rf /data/web_static/releases/{file_name}/web_static"
-        )
-
-        # Delete the old symbolic link
-        run(f"rm -rf /data/web_static/current")
-
-        # Create a new symbolic link to point the new version
-        run(
-            f"ln -s /data/web_static/releases/{file_name}/ "
-            f"/data/web_static/current"
-        )
+        put(archive_path, "/tmp/")
+        run("mkdir -p {}/".format(no_tgz))
+        run("tar -xzf {} -C {}/".format(tmp, no_tgz))
+        run("rm {}".format(tmp))
+        run("mv -n {}/web_static/* {}/".format(no_tgz, no_tgz))
+        run("rm -rf {}/web_static".format(no_tgz))
+        run("rm -rf /data/web_static/current")
+        run("ln -s {}/ /data/web_static/current".format(no_tgz))
 
         return True
     except:
