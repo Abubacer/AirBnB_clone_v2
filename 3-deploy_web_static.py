@@ -101,5 +101,5 @@ def deploy():
     if exists(new_path) is False:
         return False
 
-    output = deploy(new_path)
-    return (output)
+    output = do_deploy(new_path)
+    return output
