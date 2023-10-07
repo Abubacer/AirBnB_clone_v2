@@ -5,13 +5,13 @@ an archive to my web servers.
 """
 
 import os
-from fabric.api import local, run, put, env
+from fabric.api import local, run, put, env, runs_once
 from datetime import datetime
 
 
 env.hosts = ['3.84.161.155', '100.25.23.133']
 
-
+@runs_once
 def do_pack():
     """
     Generates a .tgz archive from the contents of a folder.
