@@ -5,10 +5,11 @@ the web_static folder of my AirBnB Clone repo.
 """
 
 
-from fabric.api import local
+from fabric.api import local, runs_once
 from datetime import datetime
 
 
+@runs_once
 def do_pack():
     """
     Generates a .tgz archive from the contents of a folder.
@@ -18,11 +19,11 @@ def do_pack():
 
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
-    file = f"versions/web_static_{timestamp}.tgz"
+    output_file = f"versions/web_static_{timestamp}.tgz"
 
-    dest_file = local(f"sudo tar -cvzf {file} web_static")
+    dest_file = local(f"sudo tar -cvzf {output_file} web_static")
 
     if dest_file.succeeded:
-        return file
+        return output_file
     else:
         return None
