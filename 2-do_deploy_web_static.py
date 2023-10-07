@@ -27,9 +27,9 @@ def do_deploy(archive_path):
 
     try:
         # Upload the archive to the /tmp/ directory of the web server
-        put(archive_path, f"/tmp/{dir_name}")
+        put(archive_path, f"/tmp/{file_name}")
         # Create the target directory if it doesn't exist
-        run(f"mkdir -p {file_name}")
+        run(f"mkdir -p {dir_path}")
         # Uncompress the archive into the new directory on the server
         run(f"tar -xzf /tmp/{file_name} -C {dir_path}")
         # Remove the tmp archive from the server
