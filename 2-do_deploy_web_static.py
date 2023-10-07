@@ -25,25 +25,25 @@ def do_deploy(archive_path):
     # Get the file name and the folder name
     file_name = os.path.basename(archive_path)
     dir_name = file_name.replace(".tgz", "")
-    dir_path = f"/data/web_static/releases/{dir_name}/"
+    dir_path = "/data/web_static/releases/{}/".format(dir_name)
 
     try:
         # Upload the archive to the /tmp/ directory of the web server
-        put(archive_path, f"/tmp/{file_name}")
+        put(archive_path, "/tmp/{}".format(file_name))
         # Create the target directory if it doesn't exist
-        run(f"mkdir -p {dir_path}")
+        run("mkdir -p {}".format(dir_path))
         # Uncompress the archive into the new directory on the server
-        run(f"tar -xzf /tmp/{file_name} -C {dir_path}")
+        run("tar -xzf /tmp/{} -C {}".format(file_name, dir_path))
         # Remove the tmp archive from the server
-        run(f"rm -rf /tmp/{file_name}")
+        run("rm -rf /tmp/{}".format(file_name))
         # Move the contents to the correct location
-        run(f"mv -n {dir_path}web_static/* {dir_path}")
+        run("mv -f {}web_static/* {}".format(dir_path, dir_path))
         # Delete the old web_static directory
-        run(f"rm -rf {dir_path}web_static")
+        run("rm -rf {}web_static".format(dir_path))
         # Delete the old symbolic link
-        run(f"rm -rf /data/web_static/current")
+        run("rm -rf /data/web_static/current")
         # Create a new symbolic link to point the new version
-        run(f"ln -s {dir_path} /data/web_static/current")
+        run("ln -s {} /data/web_static/current".format(dir_path))
 
         print("New version deployed!")
         return True
