@@ -30,7 +30,7 @@ $nginx_setup = "server {
 
 # Install Nginx
 package { 'nginx':
-  ensure => 'installed',
+  ensure  => 'installed',
 }
 
 # Create necessary directories
@@ -65,11 +65,11 @@ file { '/data/web_static/releases/test/index.html':
 
 # Create the symbolic link /data/web_static/releases/test/ /data/web_static/current
 file { '/data/web_static/current':
-  ensure  => 'link',
-  target  => '/data/web_static/releases/test/',
-  owner   => 'ubuntu',
-  group   => 'ubuntu',
-  mode    => '0755',
+  ensure => 'link',
+  target => '/data/web_static/releases/test/',
+  owner  => 'ubuntu',
+  group  => 'ubuntu',
+  mode   => '0755',
 }
 
 # Set up nginx server block configuration
