@@ -87,7 +87,7 @@ def deploy():
 
 
 def do_clean(number=0):
-    """ Cleans by deleting out-of-date archives from my web servers.
+    """ Cleans and deletes out-of-date archives from my web servers.
 
     Args:
        number (any): the number of the archives, including the most recent.
