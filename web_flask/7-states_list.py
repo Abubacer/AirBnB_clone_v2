@@ -21,8 +21,8 @@ def states_list_html():
     Defines a route for /states_list to display a HTML page.
     Fetchs data from the storage engine.
     """
-    states_list = storage.all("State").values()
-    return render_template('7-states_list.html', states_list=states_list)
+    states = storage.all("State").values()
+    return render_template('7-states_list.html', states=states)
 
 
 @app.teardown_appcontext
